@@ -6,18 +6,25 @@ module.exports = {
     '常规观察': 'ok',
     '正常': 'ok',
     '已复查': 'ok',
+    '已闭环': 'ok',
     '重点保护': 'warn',
+    '待补充': 'warn',
+    '待确认': 'warn',
     '异常待复查': 'bad',
+    '待补证': 'bad',
     '暂停开放': 'bad'
   },
   collections: {
     sites: { label: '样点档案' },
-    surveys: { label: '巡测记录' }
+    surveys: { label: '巡测记录' },
+    incidents: { label: '干扰处置' }
   },
   stats: [
     { label: '样点', collection: 'sites' },
     { label: '重点保护', collection: 'sites', filter: { field: 'protectedStatus', value: '重点保护' } },
-    { label: '巡测记录', collection: 'surveys' },
+    { label: '处置中', collection: 'incidents', filter: { field: 'phase', value: '处置中' } },
+    { label: '待补证', collection: 'incidents', filter: { field: 'phase', value: '待补证' } },
+    { label: '待确认', collection: 'incidents', filter: { field: 'phase', value: '待确认' } },
     { label: '待复查', collection: 'surveys', filter: { field: 'status', value: '异常待复查' } }
   ],
   views: [
@@ -25,8 +32,21 @@ module.exports = {
       id: 'dashboard',
       label: '趋势看板',
       type: 'dashboard',
-      focusTitle: '异常与复查',
-      focus: { collection: 'surveys', field: 'status', values: ['异常待复查'], limit: 8 }
+      focusTitle: '游客干扰 · 待跟进处置（按逾期排序）',
+      focus: { collection: 'incidents', field: 'phase', values: ['处置中', '待补证', '待确认'], limit: 8 }
+    },
+    {
+      id: 'incidents',
+      label: '游客干扰处置',
+      collection: 'incidents',
+      type: 'incidents',
+      formTitle: '登记游客干扰',
+      listTitle: '处置记录（逾期最久的在前）',
+      submitLabel: '登记发现',
+      searchPlaceholder: '搜索现场人员、说明、照片',
+      searchFields: ['responderNames', 'description', 'dispositionNote', 'photoText'],
+      statusField: 'phase',
+      statusOptions: ['处置中', '待补证', '待确认', '已闭环']
     },
     {
       id: 'sites',

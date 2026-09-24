@@ -20,6 +20,17 @@
     </header>
     <main id="main"></main>
   </div>
+  <div class="modal" id="modal" hidden>
+    <form class="modal-card" id="modalForm">
+      <h3 id="modalTitle"></h3>
+      <div class="form-grid" id="modalFields"></div>
+      <p class="modal-error" id="modalError"></p>
+      <div class="actions">
+        <button type="submit">提交</button>
+        <button type="button" class="ghost" id="modalCancel">取消</button>
+      </div>
+    </form>
+  </div>
   <div class="toast" id="toast"></div>
   <script src="/app.js"></script>
 </body>

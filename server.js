@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs/promises');
 const path = require('path');
+const incidents = require('./incidents');
 
 const app = express();
 const config = require('./project.config');
@@ -12,7 +13,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 async function readDb() {
   const raw = await fs.readFile(DB_FILE, 'utf8');
-  return JSON.parse(raw);
+  const db = JSON.parse(raw);
+  if (!Array.isArray(db.incidents)) db.incidents = [];
+  return db;
 }
 
 async function writeDb(db) {
@@ -38,14 +41,58 @@ app.get('/api/config', (req, res) => {
 app.get('/api/db', async (req, res) => {
   const db = await readDb();
   for (const key of Object.keys(db)) {
-    if (Array.isArray(db[key])) db[key].sort(sortNewest);
+    if (!Array.isArray(db[key])) continue;
+    if (key === 'incidents') {
+      db[key] = incidents.sortIncidents(db[key], Date.now()).map((item) => incidents.deriveIncident(item, Date.now()));
+    } else {
+      db[key].sort(sortNewest);
+    }
   }
   res.json(db);
+});
+
+// ---- 游客干扰处置记录（专用流程，不走通用 CRUD）----
+
+function findIncident(db, id) {
+  const item = db.incidents.find((entry) => entry.id === id);
+  return item || null;
+}
+
+async function runIncidentFlow(req, res, fn) {
+  const db = await readDb();
+  const item = findIncident(db, req.params.id);
+  if (!item) return res.status(404).json({ error: '处置记录不存在' });
+  const result = fn(db, item, req.body || {}, Date.now());
+  if (result.error) return res.status(409).json({ error: result.error });
+  await writeDb(db);
+  res.status(200).json(incidents.deriveIncident(result.item, Date.now()));
+}
+
+// 登记发现；同一样点未闭环时沿用原记录、累加次数
+app.post('/api/incidents/register', async (req, res) => {
+  const db = await readDb();
+  const result = incidents.createIncident(db, req.body || {}, Date.now());
+  if (result.error) return res.status(409).json({ error: result.error });
+  await writeDb(db);
+  res.status(201).json({ ...incidents.deriveIncident(result.item, Date.now()), reused: result.reused });
+});
+
+app.post('/api/incidents/:id/photos', async (req, res) => {
+  await runIncidentFlow(req, res, incidents.addPhotos);
+});
+
+app.post('/api/incidents/:id/note', async (req, res) => {
+  await runIncidentFlow(req, res, incidents.completeNote);
+});
+
+app.post('/api/incidents/:id/confirm', async (req, res) => {
+  await runIncidentFlow(req, res, incidents.confirmRecovery);
 });
 
 app.post('/api/:collection', async (req, res) => {
   const db = await readDb();
   const { collection } = req.params;
+  if (collection === 'incidents') return res.status(409).json({ error: '处置记录请使用专用登记接口' });
   if (!Array.isArray(db[collection])) return res.status(404).json({ error: 'unknown collection' });
   const now = new Date().toISOString();
   const item = {
@@ -63,6 +110,7 @@ app.post('/api/:collection', async (req, res) => {
 app.patch('/api/:collection/:id', async (req, res) => {
   const db = await readDb();
   const { collection, id } = req.params;
+  if (collection === 'incidents') return res.status(409).json({ error: '处置记录请使用专用流转接口' });
   if (!Array.isArray(db[collection])) return res.status(404).json({ error: 'unknown collection' });
   const item = db[collection].find((entry) => entry.id === id);
   if (!item) return res.status(404).json({ error: 'not found' });
@@ -80,6 +128,7 @@ app.patch('/api/:collection/:id', async (req, res) => {
 app.delete('/api/:collection/:id', async (req, res) => {
   const db = await readDb();
   const { collection, id } = req.params;
+  if (collection === 'incidents') return res.status(409).json({ error: '处置记录不可删除，只能确认闭环' });
   if (!Array.isArray(db[collection])) return res.status(404).json({ error: 'unknown collection' });
   const before = db[collection].length;
   db[collection] = db[collection].filter((entry) => entry.id !== id);
