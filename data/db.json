@@ -13,9 +13,29 @@
       "baselineCo2": 680,
       "note": "游客步道上方，滴水频率稳定",
       "createdAt": "2026-06-14T08:00:00.000Z",
-      "updatedAt": "2026-06-14T08:00:00.000Z",
+      "updatedAt": "2026-06-22T01:30:00.000Z",
       "history": [
+        { "at": "2026-06-22T01:30:00.000Z", "action": "游客干扰上报", "note": "原状态「常规观察」已记录，处置期间重点保护" },
         { "at": "2026-06-14T08:00:00.000Z", "action": "创建", "note": "样点建档" }
+      ]
+    },
+    {
+      "id": "site-seed-2",
+      "cave": "北麓三号洞",
+      "zone": "石笋林区",
+      "pointCode": "S-03",
+      "route": "东线巡测",
+      "sensitivity": "高",
+      "protectedStatus": "重点保护",
+      "baselineTemp": 15.8,
+      "baselineHumidity": 94,
+      "baselineCo2": 720,
+      "note": "栏杆低矮，此前因落石风险暂停开放；干扰处置结案后仍不开放",
+      "createdAt": "2026-05-30T08:00:00.000Z",
+      "updatedAt": "2026-06-23T02:10:00.000Z",
+      "history": [
+        { "at": "2026-06-23T02:10:00.000Z", "action": "游客干扰上报", "note": "原状态「暂停开放」已记录，处置期间重点保护" },
+        { "at": "2026-05-30T08:00:00.000Z", "action": "创建", "note": "样点建档" }
       ]
     }
   ],
@@ -37,6 +57,65 @@
       "updatedAt": "2026-06-18T10:00:00.000Z",
       "history": [
         { "at": "2026-06-18T10:00:00.000Z", "action": "创建", "note": "CO2升高并有干扰痕迹" }
+      ]
+    }
+  ],
+  "incidents": [
+    {
+      "id": "incident-seed-1",
+      "siteId": "site-seed-1",
+      "discoveredAt": "2026-06-22T01:30:00.000Z",
+      "staff": "闻笛",
+      "photoUrl": "",
+      "note": "有游客翻越栏杆触碰 D-07 钟乳石基座，地面有反光手印",
+      "reports": [
+        { "at": "2026-06-22T01:30:00.000Z", "staff": "闻笛", "note": "有游客翻越栏杆触碰 D-07 钟乳石基座，地面有反光手印", "photoUrl": "" }
+      ],
+      "reportCount": 1,
+      "lastReportAt": "2026-06-22T01:30:00.000Z",
+      "status": "待补证",
+      "priorStatus": "常规观察",
+      "evidenceDueAt": "2026-06-23T01:30:00.000Z",
+      "photoSuppliedAt": "",
+      "photoSuppliedBy": "",
+      "handler": "",
+      "handleNote": "",
+      "handledAt": "",
+      "confirmer": "",
+      "confirmedAt": "",
+      "createdAt": "2026-06-22T01:30:00.000Z",
+      "updatedAt": "2026-06-22T01:30:00.000Z",
+      "history": [
+        { "at": "2026-06-22T01:30:00.000Z", "action": "登记游客干扰", "note": "2026-06-22T01:30:00.000Z 现场人员：闻笛" }
+      ]
+    },
+    {
+      "id": "incident-seed-2",
+      "siteId": "site-seed-2",
+      "discoveredAt": "2026-06-23T02:10:00.000Z",
+      "staff": "沈宁",
+      "photoUrl": "https://example.com/cave/s-03-touch.jpg",
+      "note": "暂停开放围挡被挪开，两名游客越线进入 S-03 外围拍照",
+      "reports": [
+        { "at": "2026-06-23T02:10:00.000Z", "staff": "沈宁", "note": "暂停开放围挡被挪开，两名游客越线进入 S-03 外围拍照", "photoUrl": "https://example.com/cave/s-03-touch.jpg" }
+      ],
+      "reportCount": 1,
+      "lastReportAt": "2026-06-23T02:10:00.000Z",
+      "status": "待确认",
+      "priorStatus": "暂停开放",
+      "evidenceDueAt": "2026-06-24T02:10:00.000Z",
+      "photoSuppliedAt": "2026-06-23T02:10:00.000Z",
+      "photoSuppliedBy": "沈宁",
+      "handler": "韩竞",
+      "handleNote": "已劝离游客并复位围挡、加贴警示带；现场温湿度与基准一致，未见沉积物破损，需另一位巡测员复核。",
+      "handledAt": "2026-06-23T03:05:00.000Z",
+      "confirmer": "",
+      "confirmedAt": "",
+      "createdAt": "2026-06-23T02:10:00.000Z",
+      "updatedAt": "2026-06-23T03:05:00.000Z",
+      "history": [
+        { "at": "2026-06-23T03:05:00.000Z", "action": "负责人补充现场说明", "note": "现场说明已补，等待另一位巡测员确认环境恢复" },
+        { "at": "2026-06-23T02:10:00.000Z", "action": "登记游客干扰", "note": "2026-06-23T02:10:00.000Z 现场人员：沈宁" }
       ]
     }
   ]
